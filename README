@@ -1,0 +1,271 @@
+Project II: Spelling Checker
+
+Yash Patel: ydp11
+Waasil Ahmed: wa147
+
+
+
+For this assignment, we were able to break down the 3 components given to us:
+1. Finding and opening all the specified files, including directory traversal
+    -In order to properly execute this and see if a directory was included, we used a simple google search and found a stackoverflow solution
+    -https://stackoverflow.com/questions/19464571/whether-a-given-file-argument-is-a-directory-or-not-c 
+    -In addition to this, the lecture notes mentioned specific uses which we were able to utilize to open and read the files.
+
+2. Reading the file and generating a sequence of position-annotated words
+    -To read the file, we used the function, processTextFile which is mentioned below.
+
+3. Checking whether a word is contained in the dictionary
+    - We started by adding everything to the dictionary. To do this, we basically created an array with the space of 100k string bytes. 
+We did this due to the fact that the ilab dictionary has this many words. However, if this is not enough space, it will multiply 
+later on to increase to the necessary amount. We freed everything at the end of the program as this is the only thing we needed to 
+allocate space for.
+    - Then what we did was we had a couple of different functions that would do different things:
+        - trimWord, this basically got rid of the punctuation that was either behind or in front of the word that was in the text file
+
+        - capitalizationCheck: This function made sure that if a word in the dictionary was capitalized, It would check the word to 
+        see if it matched first of all, but then would also check if the word in the text file ad any extra capitalization. 
+        The assignment says that this would be considered correct.
+
+        - checkVariations: This function checks if the word exists in the dictionary using binary search. It uses the 
+        capitalizationCheck to return true or false to its call.
+
+        - processBuffer: Simply put, this function checks each word in the text file and uses checkVariations
+
+        - processTextFile: This function calls processBuffer and properly checks with dictionary
+
+        - processWordComponenet: This function checks each component of a hyphenated word to see if it matches with the dictionary
+
+        - processHyphenatedWord: This function utilizes processWordComponent to fully match the whole entire word with the 
+        dictionary and returns if it is a valid word or not
+
+    - In order to find the word in the dictionary, we used binary search to efficiently find the word. We can see that 
+    this is O(logn) which isn't too slow and the program executes fast enough regardless. When using the ilab dictionary,
+    it seems to take around half a second to load and display the outputs or the spelling errors. However, with smaller
+    dictionaries, it gives the output instantly.
+
+
+To test this code, we used the following dictionary: (dict1.txt)
+hello
+MacDonald
+Hyphenated
+moMent
+Tester's
+
+With the test file containing: (test1.txt)
+Hello HellO
+hello
+HELLO
+HelLo
+MacDonald
+'macDonald.
+MACDONALD
+macdonald
+MACDonald 
+MAcDonald
+HYPHEN-ATED
+Hyphenated
+MACDONAld
+moment
+MOMEnt
+Moment 
+MoMENT
+MoMent
+MOMENT
+Testers
+TESTERs
+testers 
+tESTERs 
+123hello
+12hello232
+12MacDonalD123
+321macDonald123
+TESter's 
+Tester's
+Hyphenated-hello
+HYPHENATED-HELLO
+Hyphenated-Hello
+HYphenated-Hello
+
+With this information, the program reported:
+test1.txt (1,7): HellO
+test1.txt (4,1): HelLo
+test1.txt (6,2): macDonald
+test1.txt (8,1): macdonald
+test1.txt (9,1): MACDonald
+test1.txt (10,1): MAcDonald
+test1.txt (11,1): HYPHEN-ATED
+test1.txt (13,1): MACDONAld
+test1.txt (14,1): moment
+test1.txt (15,1): MOMEnt
+test1.txt (17,1): MoMENT
+test1.txt (18,1): MoMent
+test1.txt (20,1): Testers
+test1.txt (21,1): TESTERs
+test1.txt (22,1): testers
+test1.txt (23,1): tESTERs
+test1.txt (26,1): MacDonalD
+test1.txt (27,1): macDonald
+test1.txt (28,1): TESter's
+test1.txt (33,1): HYphenated-Hello
+
+Clearly, it reports all the correct information. We were unclear if the apostrophes from words like Tester’s 
+needed to be removed because in the assignment details it says that it doesn’t need to be noticed and should 
+be a separate word in the dictionary than Testers. We only removed trailing punctuation from the text file.
+
+The reason we used this test waas because it allows us to tackle a couple of different scenarios. For example, 
+it was able to detect the punctuation and trim it and still report whether or not it was wrong or not. Also, 
+the apostrophe as mentioned before still outputs properly. If the word is spelled incorrectly or if the 
+capitalization is incorrect, it will report it incorrectly. In addition to this, we used the hyphen and 
+it seems to report properly. We were unclear as to the directions with this but we implemented it to the best 
+of our ability.
+
+
+The next textfile and dictionary we used was: (dict2.txt) (test2.txt)
+
+Dictionary:
+apple
+Rutgers
+NSA
+fooBar
+aBc 
+
+Text File: 
+apple Apple aPple APPLE 
+rutgers RUTGers RUTGERS Rutgers 
+nSa NSA Nsa 
+foobar FooBAR FOOBAR Foobar 
+aBc ABc ABC abc abC aBC Abc AbC
+
+
+Output:
+test2.txt (1,13): aPple
+test2.txt (2,1): rutgers
+test2.txt (2,9): RUTGers
+test2.txt (3,1): nSa
+test2.txt (4,1): foobar
+test2.txt (4,8): FooBAR
+test2.txt (5,5): ABc
+test2.txt (5,13): abc
+test2.txt (5,17): abC
+test2.txt (5,21): aBC
+test2.txt (5,29): AbC
+
+The reason we used this test scenario was because it came from the lecture notes. The reason we did 
+this was because we can see exactly if it outputs correctly because we are basically given the 
+answers in the lecture notes. Also, we were able to test if it properly outputs when there are 
+multiple words in one line. Clearly, the output displays the character at which it was reported 
+which shows exactly where the incorrect word is coming from. The main reason for this scenario 
+was to check the capitalization as aBc was initially giving us issues. However, we were able to 
+fix it and now receive the proper output.
+
+
+Lastly, we used a directory with many different files. We had a directory which had multiple 
+different text files and even another directory. We were able to see this as the output:
+
+./spchk dict1.txt test2.txt testholder test1.txt
+test2.txt (1,1): apple
+test2.txt (1,7): Apple
+test2.txt (1,13): aPple
+test2.txt (1,19): APPLE
+test2.txt (2,1): rutgers
+test2.txt (2,9): RUTGers
+test2.txt (2,17): RUTGERS
+test2.txt (2,25): Rutgers
+test2.txt (3,1): nSa
+test2.txt (3,5): NSA
+test2.txt (3,9): Nsa
+test2.txt (4,1): foobar
+test2.txt (4,8): FooBAR
+test2.txt (4,15): FOOBAR
+test2.txt (4,22): Foobar
+test2.txt (5,1): aBc
+test2.txt (5,5): ABc
+test2.txt (5,9): ABC
+test2.txt (5,13): abc
+test2.txt (5,17): abC
+test2.txt (5,21): aBC
+test2.txt (5,25): Abc
+test2.txt (5,29): AbC
+testholder/notSkip3.txt (1,1): This
+testholder/notSkip3.txt (1,6): is
+testholder/notSkip3.txt (1,9): a
+testholder/notSkip3.txt (1,11): sentence
+testholder/notSkip4.txt (2,1): Collect
+testholder/notSkip4.txt (3,1): the
+testholder/notSkip4.txt (4,1): Age
+testholder/notSkip4.txt (5,1): Game
+testholder/notSkip2.txt (1,1): ashdjfa
+testholder/notSkip2.txt (2,1): a
+testholder/notSkip2.txt (2,3): shfds
+testholder/notSkip2.txt (3,1): asdfihas
+testholder/folderinfold/notSkip1.txt (1,1): Has
+testholder/folderinfold/notSkip1.txt (1,5): many
+testholder/folderinfold/notSkip1.txt (1,10): errors
+testholder/folderinfold/notSkip1.txt (2,1): aldjfh
+test1.txt (1,7): HellO
+test1.txt (4,1): HelLo
+test1.txt (6,2): macDonald
+test1.txt (8,1): macdonald
+test1.txt (9,1): MACDonald
+test1.txt (10,1): MAcDonald
+test1.txt (11,1): HYPHEN-ATED
+test1.txt (13,1): MACDONAld
+test1.txt (14,1): moment
+test1.txt (15,1): MOMEnt
+test1.txt (17,1): MoMENT
+test1.txt (18,1): MoMent
+test1.txt (20,1): Testers
+test1.txt (21,1): TESTERs
+test1.txt (22,1): testers
+test1.txt (23,1): tESTERs
+test1.txt (26,1): MacDonalD
+test1.txt (27,1): macDonald
+test1.txt (28,1): TESter's
+test1.txt (33,1): HYphenated-Hello
+
+Through this, we can see that it was able to open each and every file whether it was in a directory or by itself. 
+On top of this, we had files inside of these directories that would start with ‘.’. However, these files were 
+skipped as it was mentioned in the assignment details. There are plenty of test files inside this folder and
+the code can handle it properly and move onto the next file when it has found any issue or it has completed
+reading the current file.
+
+One last thing, This is the output with the large ilab file:
+./spchk /usr/share/dict/words  test2.txt testholder test1.txt
+test2.txt (1,13): aPple
+test2.txt (2,1): rutgers
+test2.txt (2,9): RUTGers
+test2.txt (3,1): nSa
+test2.txt (4,8): FooBAR
+test2.txt (5,1): aBc
+test2.txt (5,5): ABc
+test2.txt (5,13): abc
+test2.txt (5,17): abC
+test2.txt (5,21): aBC
+test2.txt (5,29): AbC
+testholder/notSkip2.txt (1,1): ashdjfa
+testholder/notSkip2.txt (2,3): shfds
+testholder/notSkip2.txt (3,1): asdfihas
+testholder/folderinfold/notSkip1.txt (2,1): aldjfh
+test1.txt (1,7): HellO
+test1.txt (4,1): HelLo
+test1.txt (6,2): macDonald
+test1.txt (8,1): macdonald
+test1.txt (9,1): MACDonald
+test1.txt (10,1): MAcDonald
+test1.txt (11,1): HYPHEN-ATED
+test1.txt (13,1): MACDONAld
+test1.txt (15,1): MOMEnt
+test1.txt (17,1): MoMENT
+test1.txt (18,1): MoMent
+test1.txt (21,1): TESTERs
+test1.txt (23,1): tESTERs
+test1.txt (26,1): MacDonalD
+test1.txt (27,1): macDonald
+test1.txt (28,1): TESter's
+test1.txt (33,1): HYphenated-Hello
+
+Just for fun we also tested the dictionary with itself and received:
+ydp11@butter:~/systems/P2$ ./spchk dict1.txt dict1.txt
+ydp11@butter:~/systems/P2$ ./spchk dict2.txt dict2.txt
+Both with EXIT_SUCCESS
+

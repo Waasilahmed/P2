@@ -1,0 +1,5 @@
+apple Apple aPple APPLE 
+rutgers RUTGers RUTGERS Rutgers 
+nSa NSA Nsa 
+foobar FooBAR FOOBAR Foobar 
+aBc ABc ABC abc abC aBC Abc AbC
